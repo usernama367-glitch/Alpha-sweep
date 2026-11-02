@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alpha Sweep | Proprietary Educational Platform</title>
+    <style>
+        :root {
+            --bg-main: #0a0e17;
+            --bg-card: #121824;
+            --accent: #00ffcc;
+            --accent-hover: #00ccaa;
+            --text-main: #ffffff;
+            --text-muted: #8a99ad;
+            --border: #1e293b;
+            --danger: #ff4a4a;
+            --success: #00ff66;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            padding: 20px;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 30px;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .premium-badge {
+            background: linear-gradient(135deg, #ffd700, #ffa500);
+            color: #000;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 12px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 25px;
+        }
+
+        @media (max-width: 900px) {
+            .grid { grid-template-columns: 1fr; }
+        }
+
+        .card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+
+        h2 {
+            font-size: 18px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        /* Asset Table Styles */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        th {
+            color: var(--text-muted);
+            font-size: 12px;
+            text-transform: uppercase;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        td {
+            padding: 14px 0;
+            border-bottom: 1px solid var(--border);
+            font-variant-numeric: tabular-nums;
+        }
+
+        .price-up { color: var(--success); }
+        .price-down { color: var(--danger); }
+
+        /* Controls & Form */
+        .btn {
+            background-color: var(--accent);
+            color: #000;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            width: 100%;
+            transition: background 0.2s;
+        }
+
+        .btn:hover { background-color: var(--accent-hover); }
+
+        .btn-secondary {
+            background-color: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-main);
+        }
+        .btn-secondary:hover { background-color: var(--border); }
+
+        /* Bot & Lesson Layouts */
+        .bot-toggle-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #1a2333;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 26px;
+        }
+
+        .switch input { display: none; }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px; width: 18px;
+            left: 4px; bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider { background-color: var(--success); }
+        input:checked + .slider:before { transform: translateX(24px); }
+
+        .lesson-item {
+            padding: 12px;
+            border-left: 3px solid var(--border);
+            background: #161f30;
+            margin-bottom: 10px;
+            border-radius: 0 6px 6px 0;
+        }
+
+        .lesson-item.completed {
+            border-left-color: var(--success);
+        }
+
+        .metrics-bar {
+            display: flex;
+            justify-content: space-between;
+            background: #161f30;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo">Alpha Sweep</div>
+        <div id="premiumStatus" class="premium-badge" style="display: none;">PREMIUM ACTIVE</div>
+    </header>
+
+    <div class="grid">
+        <!-- Main Panel -->
+        <div>
+            <!-- Live Charts & Market Pricing Panel -->
+            <div class="card">
+                <h2>Live Proprietary Feeds <span style="font-size: 12px; color: var(--text-muted);">● Streaming Active</span></h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Asset Name</th>
+                            <th>Live Price</th>
+                            <th>24h Change</th>
+                        </tr>
+                    </thead>
+                    <tbody id="marketFeeds">
+                        <tr id="row-XAUUSD">
+                            <td><strong>XAUUSD</strong> (Gold)</td>
+                            <td id="price-XAUUSD" class="price-up">2,740.50</td>
+                            <td class="price-up">+0.42%</td>
+                        </tr>
+                        <tr id="row-US30">
+                            <td><strong>US30</strong> (Dow Jones)</td>
+                            <td id="price-US30" class="price-down">42,050.00</td>
+                            <td class="price-down">-0.15%</td>
+                        </tr>
+                        <tr id="row-NAS100">
+                            <td><strong>NAS100</strong> (Nasdaq)</td>
+                            <td id="price-NAS100" class="price-up">20,115.75</td>
+                            <td class="price-up">+0.88%</td>
+                        </tr>
+                        <tr id="row-EURUSD">
+                            <td><strong>EURUSD</strong></td>
+                            <td id="price-EURUSD" class="price-up">1.08540</td>
+                            <td class="price-up">+0.05%</td>
+                        </tr>
+                        <tr id="row-GBPUSD">
+                            <td><strong>GBPUSD</strong></td>
+                            <td id="price-GBPUSD" class="price-down">1.29620</td>
+                            <td class="price-down">-0.12%</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Bot Engine Panel -->
+            <div class="card">
+                <h2>Alpha Sweep Algorithmic Bot</h2>
+                <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 15px;">
+                    Deploy the automated sweeping engine across high-volatility commodity and index pairs. Requires R45 premium tier access.
+                </p>
+                <div class="bot-toggle-container">
+                    <div>
+                        <strong>Activate Bot Execution</strong>
+                        <div id="botStatusText" style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">Status: Locked (Premium Verification Required)</div>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="botToggle" disabled onchange="handleBotToggle(this)">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <div id="botLog" style="margin-top: 15px; padding: 10px; background: #0a0e17; font-family: monospace; font-size: 12px; color: var(--accent); border-radius: 6px; display: none; max-height: 100px; overflow-y: auto;">
+                    [SYSTEM] Bot standing by...
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar Panel -->
+        <div>
+            <!-- Account & Funding Environment -->
+            <div class="card">
+                <h2>Account Environment</h2>
+                <div class="metrics-bar">
+                    <div>Account Size: <strong id="envSize">$10,000</strong></div>
+                    <div>Type: <strong id="envType" style="color: var(--accent);">DEMO (Simulated)</strong></div>
+                </div>
+                <div id="premiumPaywall">
+                    <p style="font-size: 14px; margin-bottom: 15px; color: var(--text-muted);">
+                        Unlock full premium challenge matrices, real-time proprietary accounts, and trading bots for <strong>R45 once-off</strong>.
+                    </p>
+                    <button class="btn" onclick="processPremiumSignup()">Pay R45 to Upgrade</button>
+                </div>
+                <div id="activeDashboard" style="display: none;">
+                    <div style="font-size: 14px; margin-bottom: 10px;"><strong>Prop Challenge Framework:</strong></div>
