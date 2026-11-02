@@ -279,7 +279,60 @@
                     <p style="font-size: 14px; margin-bottom: 15px; color: var(--text-muted);">
                         Unlock full premium challenge matrices, real-time proprietary accounts, and trading bots for <strong>R45 once-off</strong>.
                     </p>
-                    <button class="btn" onclick="processPremiumSignup()">Pay R45 to Upgrade</button>
+                    <button class="btn" onclick="// Replace this with your actual Public Key from the Paystack Dashboard
+const PAYSTACK_PUBLIC_KEY = 'pk_test_your_copied_public_key_here'; 
+
+function processPremiumSignup() {
+    // 1. Prompt the user for an email address (required by Paystack)
+    const userEmail = prompt("Please enter your email address to complete the R45 premium activation:");
+    
+    if (!userEmail || !userEmail.includes('@')) {
+        alert("A valid email address is required to process payment safely.");
+        return;
+    }
+
+    // 2. Initialize the secure Paystack Inline Popup Engine
+    let handler = PaystackPop.setup({
+        key: PAYSTACK_PUBLIC_KEY,
+        email: userEmail,
+        amount: 4500, // Amount is in cents (4500 cents = R45.00)
+        currency: 'ZAR',
+        ref: 'ALPHA_SWEEP_' + Math.floor((Math.random() * 100000000) + 1), // Unique reference ID
+        
+        // 3. Executed the millisecond the payment clears perfectly
+        callback: function(response){
+            alert('Payment successful! Reference ID: ' + response.reference);
+            activatePremiumUserFeatures();
+        },
+        
+        // 4. Executed if the user closes the window manually
+        onClose: function(){
+            alert('Transaction cancelled. Premium systems remain locked.');
+        }
+    });
+
+    // 5. Open the secure payment overlay frame
+    handler.openIframe();
+}
+
+function activatePremiumUserFeatures() {
+    isPremium = true;
+    document.getElementById('premiumPaywall').style.display = 'none';
+    document.getElementById('activeDashboard').style.display = 'block';
+    document.getElementById('premiumStatus').style.display = 'block';
+    
+    // Unlock live simulated environment and features
+    document.getElementById('envType').innerText = 'LIVE SIMULATED';
+    document.getElementById('envType').style.color = 'var(--success)';
+    document.getElementById('botToggle').disabled = false;
+    document.getElementById('botStatusText').innerText = 'Status: Ready to Deploy';
+    
+    // Advance lesson status progress
+    document.getElementById('lesson2').className = 'lesson-item completed';
+    document.getElementById('lesson2Status').innerText = 'Passed Verification';
+    document.getElementById('lesson2Status').style.color = 'var(--success)';
+}
+
                 </div>
                 <div id="activeDashboard" style="display: none;">
                     <div style="font-size: 14px; margin-bottom: 10px;"><strong>Prop Challenge Framework:</strong></div>
